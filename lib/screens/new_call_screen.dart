@@ -40,18 +40,66 @@ class _NewCallScreenState extends State<NewCallScreen> {
                 objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
               ),
             )
-          : GridView.count(
-              crossAxisCount: math.sqrt(peers.length).toInt(),
-              childAspectRatio: 3 / 2,
+          : Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                for (final peer in peers.values)
-                  Container(
-                    child: RTCVideoView(
-                      _remoteRTCVideoRenderers[peer]!,
-                      objectFit:
-                          RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                GridView.count(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  crossAxisCount: math.sqrt(peers.length).toInt(),
+                  childAspectRatio: 2 / 3,
+                  children: [
+                    for (final peer in _remoteRTCVideoRenderers.entries)
+                      // Text(peer.key),
+                      Container(
+                        child: RTCVideoView(
+                          _remoteRTCVideoRenderers[peer.key]!,
+                          objectFit: RTCVideoViewObjectFit
+                              .RTCVideoViewObjectFitContain,
+                        ),
+                      )
+                  ],
+                ),
+                Wrap(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        isVideoOn ? Icons.videocam : Icons.videocam_off,
+                      ),
+                      onPressed: () {
+                        _toggleCamera();
+                      },
                     ),
-                  )
+                    IconButton(
+                      icon: Icon(
+                        isAudioOn ? Icons.mic : Icons.mic_off,
+                      ),
+                      onPressed: () {
+                        _toggleMic();
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        isFrontCameraSelected
+                            ? Icons.camera_front
+                            : Icons.camera_rear,
+                      ),
+                      onPressed: () {
+                        _switchCamera();
+                      },
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          socket!.disconnect();
+                          socket!.close();
+                          Navigator.of(context).pop();
+                        });
+                      },
+                      icon: Icon(Icons.call_end_rounded),
+                    ),
+                  ],
+                ),
               ],
             ),
     );
@@ -66,7 +114,7 @@ class _NewCallScreenState extends State<NewCallScreen> {
           : false,
     });
     _localRTCVideoRenderer.srcObject = _localStream;
-    setState(() {});
+    // setState(() {});
     await join();
     log("Joining Complete!");
     socket!.on(
@@ -172,9 +220,12 @@ class _NewCallScreenState extends State<NewCallScreen> {
         _remoteRTCVideoRenderers.addAll({
           peerId: RTCVideoRenderer(),
         });
-        await _remoteRTCVideoRenderers[peerId]!.initialize();
+        await _remoteRTCVideoRenderers[peerId]!.initialize().then((value) {
+          _remoteRTCVideoRenderers[peerId]!.srcObject = event.streams[0];
+        });
+      } else {
+        _remoteRTCVideoRenderers[peerId]!.srcObject = event.streams[0];
       }
-      _remoteRTCVideoRenderers[peerId]!.srcObject = event.streams[0];
       setState(() {});
     };
 
@@ -245,5 +296,38 @@ class _NewCallScreenState extends State<NewCallScreen> {
     }
     setState(() {});
     log("Removing peer succeeded");
+  }
+
+  _toggleMic() {
+    // change status
+    isAudioOn = !isAudioOn;
+    // enable or disable audio track
+    _localStream?.getAudioTracks().forEach((track) {
+      track.enabled = isAudioOn;
+    });
+    setState(() {});
+  }
+
+  _toggleCamera() {
+    // change status
+    isVideoOn = !isVideoOn;
+
+    // enable or disable video track
+    _localStream?.getVideoTracks().forEach((track) {
+      track.enabled = isVideoOn;
+    });
+    setState(() {});
+  }
+
+  _switchCamera() {
+    // change status
+    isFrontCameraSelected = !isFrontCameraSelected;
+
+    // switch camera
+    _localStream?.getVideoTracks().forEach((track) {
+      // ignore: deprecated_member_use
+      track.switchCamera();
+    });
+    setState(() {});
   }
 }
