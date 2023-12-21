@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_webrtc_app/screens/call_screen.dart';
 import 'package:flutter_webrtc_app/screens/loading_elevated_button.dart';
 import 'package:flutter_webrtc_app/screens/new_call_screen.dart';
 import 'package:socket_io_client/socket_io_client.dart';
@@ -67,12 +66,10 @@ class _WebRTCScreenState extends State<WebRTCScreen> {
                 );
               });
 
-              // listen onConnectError event
               socket!.onConnectError((data) {
                 log("Connect Error $data");
               });
 
-              // connect socket
               socket!.connect();
             },
             icon: Icon(Icons.connect_without_contact),
