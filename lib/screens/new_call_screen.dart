@@ -168,6 +168,7 @@ class _NewCallScreenState extends State<NewCallScreen> {
         }
       },
     );
+    socket!.on('disconnect', (data) => disconnect());
   }
 
   Future<void> join() async {
@@ -329,5 +330,17 @@ class _NewCallScreenState extends State<NewCallScreen> {
       track.switchCamera();
     });
     setState(() {});
+  }
+
+  disconnect() async {
+    log("Disconnected from signaling server");
+    for (final peerId in peers.entries) {
+      peers[peerId.key]!.close();
+    }
+    peers.clear();
+    for (final peerId in _remoteRTCVideoRenderers.entries) {
+      _remoteRTCVideoRenderers[peerId.key]!.dispose();
+    }
+    _remoteRTCVideoRenderers.clear();
   }
 }

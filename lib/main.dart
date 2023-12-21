@@ -36,7 +36,7 @@ class VideoCallApp extends StatelessWidget {
   // generate callerID of local user
   // final String selfCallerID =
   //     Random().nextInt(999999).toString().padLeft(6, '0');
-  final String selfCallerID = "shivanshukgupta@gmail.com";
+  // final String selfCallerID = "shivanshukgupta@gmail.com";
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class VideoCallApp extends StatelessWidget {
         colorScheme: const ColorScheme.dark(),
       ),
       themeMode: ThemeMode.dark,
-      home: MyScreen(),
+      home: WebRTCScreen(),
     );
   }
 }
