@@ -1,16 +1,19 @@
 # Conference Video Calling app
 
-A new Flutter project.
+A video conferencing app made using WebRTC in Flutter.
 
-## Getting Started
+## Steps to run the server
 
-This project is a starting point for a Flutter application.
+Run these commands in your terminal to clone and run the server:
+> git clone [https://github.com/ShivanshuKGupta/signalling-server-webRTC](https://github.com/ShivanshuKGupta/signalling-server-webRTC.git) server
+> cd server
+> npm i
+> npm run start
 
-A few resources to get you started if this is your first Flutter project:
+## Steps to run the flutter app
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Run these commands in your terminal to clone and run the app:
+> git clone [https://github.com/ShivanshuKGupta/flutter-webrtc-app.git](https://github.com/ShivanshuKGupta/flutter-webrtc-app.git) app
+> cd app
+> flutter pub get
+> flutter run
